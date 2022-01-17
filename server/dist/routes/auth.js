@@ -5,8 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const express_validator_1 = require("express-validator");
-const User_1 = __importDefault(require("../models/User"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const dotenv_1 = __importDefault(require("dotenv"));
+const User = require('../models/User');
+dotenv_1.default.config();
 const router = express_1.default.Router();
 router.post('/signup', (0, express_validator_1.body)('email').isEmail().withMessage('The email is invalid'), (0, express_validator_1.body)('password')
     .isLength({
@@ -23,7 +26,7 @@ router.post('/signup', (0, express_validator_1.body)('email').isEmail().withMess
         return res.json({ errors, data: null });
     }
     const { email, password } = req.body;
-    const user = await User_1.default.findOne({
+    const user = await User.findOne({
         email,
     });
     if (user) {
@@ -32,14 +35,58 @@ router.post('/signup', (0, express_validator_1.body)('email').isEmail().withMess
         });
     }
     const hashedPassword = await bcryptjs_1.default.hash(password, 10);
-    const newUser = await User_1.default.create({
+    const newUser = await User.create({
         email,
         password: hashedPassword,
     });
+    const token = jsonwebtoken_1.default.sign({
+        email: newUser.email,
+    }, process.env.JWT_SECRET, {
+        expiresIn: 360000,
+    });
     res.json({
-        newUser,
+        errors: [],
+        data: {
+            token,
+            user: {
+                id: newUser._id,
+                email: newUser.email,
+            },
+        },
     });
     return;
+});
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res.json({
+            errors: [{ msg: 'Invalid credentials' }],
+            data: null,
+        });
+    }
+    const isMatch = await bcryptjs_1.default.compare(password, user.password);
+    if (!isMatch) {
+        return res.json({
+            errors: [{ msg: 'Invalid credentials' }],
+            data: null,
+        });
+    }
+    const token = await jsonwebtoken_1.default.sign({
+        email: user.email,
+    }, process.env.JWT_SECRET, {
+        expiresIn: 360000,
+    });
+    return res.json({
+        errors: [],
+        data: {
+            token,
+            user: {
+                id: user._id,
+                email: user.email,
+            },
+        },
+    });
 });
 exports.default = router;
 //# sourceMappingURL=auth.js.map

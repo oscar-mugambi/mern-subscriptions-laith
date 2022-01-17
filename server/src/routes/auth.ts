@@ -1,8 +1,12 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
-import User from '../models/User';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
+const User = require('../models/User');
+
+dotenv.config();
 const router = express.Router();
 
 router.post(
@@ -45,11 +49,71 @@ router.post(
       password: hashedPassword,
     });
 
+    const token = jwt.sign(
+      {
+        email: newUser.email,
+      },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: 360000,
+      }
+    );
+
     res.json({
-      newUser,
+      errors: [],
+      data: {
+        token,
+        user: {
+          id: newUser._id,
+          email: newUser.email,
+        },
+      },
     });
     return;
   }
 );
+
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.json({
+      errors: [{ msg: 'Invalid credentials' }],
+      data: null,
+    });
+  }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  if (!isMatch) {
+    return res.json({
+      errors: [{ msg: 'Invalid credentials' }],
+      data: null,
+    });
+  }
+
+  const token = await jwt.sign(
+    {
+      email: user.email,
+    },
+    process.env.JWT_SECRET as string,
+    {
+      expiresIn: 360000,
+    }
+  );
+
+  return res.json({
+    errors: [],
+    data: {
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+      },
+    },
+  });
+});
 
 export default router;
