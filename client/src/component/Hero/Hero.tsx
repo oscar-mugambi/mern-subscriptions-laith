@@ -37,8 +37,8 @@ export default function Hero() {
             Grow, learn and become successful by reading some of the top articles by reputable
             individuals
           </SubHeading>
-          <ModalComponent text='Signup' variant='primary' />
-          <ModalComponent text='Login' variant='danger' />
+          <ModalComponent text='Sign up' variant='primary' isSignUpFLow={true} />
+          <ModalComponent text='Log in' variant='danger' isSignUpFLow={false} />
         </HeaderContainer>
       </Container>
     </HeroComponent>
