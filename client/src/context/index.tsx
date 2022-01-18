@@ -7,7 +7,7 @@ interface User {
     email: string;
   } | null;
 
-  error: [{ msg: string }] | null;
+  error: string | null;
 
   loading: boolean;
 }
@@ -31,14 +31,36 @@ const UserProvider = ({ children }: any) => {
   }
 
   const fetchUser = async () => {
-    const { data } = await axios.get('http://localhost:8080/auth/me');
-    if (data.data) {
-      console.log(data);
+    const { data: response } = await axios.get('http://localhost:8080/auth/me');
+    if (response.data && response.data.user) {
+      setUser({
+        data: {
+          id: response.data.user.id,
+          email: response.data.user.email,
+        },
+        loading: false,
+        error: null,
+      });
+      console.log(response);
+    } else if (response.data && response.data.errors.length) {
+      setUser({
+        data: null,
+        loading: false,
+        error: response.errors[0].msg,
+      });
     }
   };
 
   useEffect(() => {
-    fetchUser();
+    if (token) {
+      fetchUser();
+    } else {
+      setUser({
+        data: null,
+        loading: false,
+        error: null,
+      });
+    }
   }, []);
 
   return <UserContext.Provider value={[user, setUser]}>{children}</UserContext.Provider>;
