@@ -42,7 +42,6 @@ export default function ModalComponent({ text, variant, isSignUpFLow }: ModalPro
         password,
       });
       data = logInData;
-      console.log(logInData, 'here');
     }
 
     if (data.errors.length) {

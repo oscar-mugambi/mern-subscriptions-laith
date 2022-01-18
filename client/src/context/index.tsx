@@ -24,14 +24,14 @@ const UserProvider = ({ children }: any) => {
     error: null,
   });
 
-  const token = localStorage.getItem('token-mern');
+  const token = localStorage.getItem('token_mern');
 
   if (token) {
     axios.defaults.headers.common['authorization'] = `Bearer ${token}`;
   }
 
   const fetchUser = async () => {
-    const { data: response } = await axios.get('http://localhost:8080/auth/me');
+    const { data: response } = await axios.get('http://localhost:4000/auth/me');
     if (response.data && response.data.user) {
       setUser({
         data: {
@@ -41,7 +41,6 @@ const UserProvider = ({ children }: any) => {
         loading: false,
         error: null,
       });
-      console.log(response);
     } else if (response.data && response.data.errors.length) {
       setUser({
         data: null,
