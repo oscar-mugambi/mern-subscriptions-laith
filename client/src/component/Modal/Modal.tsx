@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, InputGroup, FormControl } from 'react-bootstrap';
 import axios from 'axios';
+import styled from 'styled-components';
 
 interface ModalProps {
   text: string;
@@ -8,35 +9,41 @@ interface ModalProps {
   isSignUpFLow: boolean;
 }
 
+const ErrorMessage = styled.div`
+  color: red;
+`;
+
 export default function ModalComponent({ text, variant, isSignUpFLow }: ModalProps) {
   const [showModal, setShowModal] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleModal = () => {
     setShowModal(!showModal);
-  };
-
-  const handleSubmit = () => {
-    console.log('clicked submit');
   };
 
   const handleClick = async () => {
     let data;
 
     if (isSignUpFLow) {
-      console.log(email, password);
-      const response = await axios.post('http://localhost:4000/auth/signup', {
+      const { data: signUpData } = await axios.post('http://localhost:4000/auth/signup', {
         email,
         password,
       });
-      console.log(response);
+
+      data = signUpData;
     } else {
-      const response = await axios.post('http://localhost:4000/auth/login', {
+      const { data: logInData } = await axios.post('http://localhost:4000/auth/login', {
         email,
         password,
       });
-      console.log(response);
+      data = logInData;
+      console.log(logInData, 'here');
+    }
+
+    if (data.errors.length) {
+      setError(data.errors[0].msg);
     }
   };
 
@@ -55,26 +62,27 @@ export default function ModalComponent({ text, variant, isSignUpFLow }: ModalPro
           <Modal.Title>{text}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <form action='' onSubmit={handleSubmit}>
-            <InputGroup className='mb-3'>
-              <InputGroup.Text>Email</InputGroup.Text>
-              <FormControl type='email' value={email} onChange={(e) => setEmail(e.target.value)} />
-            </InputGroup>
-            <InputGroup className='mb-3'>
-              <InputGroup.Text>Password</InputGroup.Text>
+          {/* <form action='' onSubmit={handleSubmit}> */}
+          <InputGroup className='mb-3'>
+            <InputGroup.Text>Email</InputGroup.Text>
+            <FormControl type='email' value={email} onChange={(e) => setEmail(e.target.value)} />
+          </InputGroup>
+          <InputGroup className='mb-3'>
+            <InputGroup.Text>Password</InputGroup.Text>
 
-              <FormControl
-                type='password'
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </InputGroup>
-          </form>
+            <FormControl
+              type='password'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </InputGroup>
+          {/* </form> */}
 
           {/* <form onSubmit={handleSubmit}>
             <input type='email' value={email} onChange={(e) => setEmail(e.target.value)} />
             <input type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
           </form> */}
+          {error && <ErrorMessage>{error}</ErrorMessage>}
         </Modal.Body>
 
         <Modal.Footer>
