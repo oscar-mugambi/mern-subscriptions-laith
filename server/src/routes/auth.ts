@@ -3,6 +3,7 @@ import { body, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { checkAuth } from '../middleware/checkAuth';
 
 const User = require('../models/User');
 
@@ -108,6 +109,20 @@ router.post('/login', async (req, res) => {
     errors: [],
     data: {
       token,
+      user: {
+        id: user._id,
+        email: user.email,
+      },
+    },
+  });
+});
+
+router.get('/me', checkAuth, async (req, res) => {
+  const user = await User.findOne({ email: req.user });
+
+  return res.send({
+    error: [],
+    data: {
       user: {
         id: user._id,
         email: user.email,

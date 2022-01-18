@@ -8,6 +8,7 @@ const express_validator_1 = require("express-validator");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const checkAuth_1 = require("../middleware/checkAuth");
 const User = require('../models/User');
 dotenv_1.default.config();
 const router = express_1.default.Router();
@@ -81,6 +82,18 @@ router.post('/login', async (req, res) => {
         errors: [],
         data: {
             token,
+            user: {
+                id: user._id,
+                email: user.email,
+            },
+        },
+    });
+});
+router.get('/me', checkAuth_1.checkAuth, async (req, res) => {
+    const user = await User.findOne({ email: req.user });
+    return res.send({
+        error: [],
+        data: {
             user: {
                 id: user._id,
                 email: user.email,
