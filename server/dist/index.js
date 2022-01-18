@@ -18,6 +18,7 @@ mongoose_1.default
     const app = (0, express_1.default)();
     app.use(express_1.default.json());
     app.use((0, cors_1.default)());
+    console.log('im hit');
     app.use('/auth', auth_1.default);
     app.get('/', (_req, res) => {
         res.send('hello world');

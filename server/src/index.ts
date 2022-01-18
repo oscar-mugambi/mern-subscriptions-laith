@@ -15,6 +15,7 @@ mongoose
     const app = express();
     app.use(express.json());
     app.use(cors());
+    console.log('im hit');
     app.use('/auth', authRoutes);
     app.get('/', (_req, res) => {
       res.send('hello world');

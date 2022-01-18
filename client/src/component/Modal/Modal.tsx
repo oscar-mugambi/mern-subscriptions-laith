@@ -45,6 +45,8 @@ export default function ModalComponent({ text, variant, isSignUpFLow }: ModalPro
     if (data.errors.length) {
       setError(data.errors[0].msg);
     }
+
+    localStorage.setItem('token_mern', data.data.token);
   };
 
   return (
