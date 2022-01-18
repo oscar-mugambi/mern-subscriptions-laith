@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Modal, Button, InputGroup, FormControl } from 'react-bootstrap';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../context';
 
 interface ModalProps {
   text: string;
@@ -21,7 +22,7 @@ export default function ModalComponent({ text, variant, isSignUpFLow }: ModalPro
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
-
+  const [state, setState] = useContext(UserContext);
   const handleModal = () => {
     setShowModal(!showModal);
   };
@@ -48,7 +49,17 @@ export default function ModalComponent({ text, variant, isSignUpFLow }: ModalPro
       return setError(data.errors[0].msg);
     }
 
+    setState({
+      data: {
+        id: data.data.user.id,
+        email: data.data.user.email,
+      },
+      error: null,
+      loading: false,
+    });
+
     localStorage.setItem('token_mern', data.data.token);
+    axios.defaults.headers.common['authorization'] = `Bearer ${data.data.token}`;
     navigate('/articles');
   };
 
@@ -81,12 +92,7 @@ export default function ModalComponent({ text, variant, isSignUpFLow }: ModalPro
               onChange={(e) => setPassword(e.target.value)}
             />
           </InputGroup>
-          {/* </form> */}
 
-          {/* <form onSubmit={handleSubmit}>
-            <input type='email' value={email} onChange={(e) => setEmail(e.target.value)} />
-            <input type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
-          </form> */}
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </Modal.Body>
 
