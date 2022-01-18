@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Modal, Button, InputGroup, FormControl } from 'react-bootstrap';
 import axios from 'axios';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 interface ModalProps {
   text: string;
@@ -18,6 +19,8 @@ export default function ModalComponent({ text, variant, isSignUpFLow }: ModalPro
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  const navigate = useNavigate();
 
   const handleModal = () => {
     setShowModal(!showModal);
@@ -43,10 +46,11 @@ export default function ModalComponent({ text, variant, isSignUpFLow }: ModalPro
     }
 
     if (data.errors.length) {
-      setError(data.errors[0].msg);
+      return setError(data.errors[0].msg);
     }
 
     localStorage.setItem('token_mern', data.data.token);
+    navigate('/articles');
   };
 
   return (
