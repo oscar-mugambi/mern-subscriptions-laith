@@ -41,6 +41,14 @@ const backgroundColors: any = {
   Premium: 'pink',
 };
 
+const createSession = async (priceId: string) => {
+  const { data: response } = await axios.post('http://localhost:4000/subs/session', {
+    priceId,
+  });
+
+  window.location.href = response.url;
+};
+
 export default function ArticlesPlan() {
   const [prices, setPrices] = useState<any[]>([]);
 
@@ -67,7 +75,13 @@ export default function ArticlesPlan() {
 
             <Card.Body>
               <Card.Title style={{ fontSize: '2rem' }}>{price.nickname}</Card.Title>
-              <Button variant='primary' className='mt-4'>
+              <Button
+                variant='primary'
+                className='mt-4'
+                onClick={() => {
+                  createSession(price.id);
+                }}
+              >
                 Buy Now
               </Button>
             </Card.Body>
