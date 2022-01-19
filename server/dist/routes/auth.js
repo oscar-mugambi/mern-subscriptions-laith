@@ -45,6 +45,7 @@ router.post('/signup', (0, express_validator_1.body)('email').isEmail().withMess
     const newUser = await User.create({
         email,
         password: hashedPassword,
+        customerStripeId: customer.id,
     });
     const token = jsonwebtoken_1.default.sign({
         email: newUser.email,
@@ -58,7 +59,7 @@ router.post('/signup', (0, express_validator_1.body)('email').isEmail().withMess
             user: {
                 id: newUser._id,
                 email: newUser.email,
-                stripeCustomerId: customer.id,
+                customerStripeId: customer.id,
             },
         },
     });
@@ -104,6 +105,7 @@ router.get('/me', checkAuth_1.checkAuth, async (req, res) => {
             user: {
                 id: user._id,
                 email: user.email,
+                stripeCustomerId: user.stripeCustomerId,
             },
         },
     });

@@ -17,6 +17,10 @@ const userSchema = new Schema({
         required: true,
         min: 5,
     },
+    customerStripeId: {
+        type: String,
+        required: true,
+    },
 });
 module.exports = mongoose_1.default.model('User', userSchema);
 //# sourceMappingURL=User.js.map

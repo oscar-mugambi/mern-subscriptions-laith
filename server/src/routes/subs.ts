@@ -1,7 +1,9 @@
 import express from 'express';
-// import dotenv from 'dotenv';
 import { checkAuth } from '../middleware/checkAuth';
 import { stripe } from '../utils/stripe';
+// import User from '../models/User';
+
+const { User } = require('../models/User');
 
 const router = express.Router();
 
@@ -14,6 +16,8 @@ router.get('/prices', checkAuth, async (_req, res) => {
 });
 
 router.post('/session', checkAuth, async (req, res) => {
+  console.log('got here');
+  const user = await User.findOne({ email: req.user });
   const session = await stripe.checkout.sessions.create(
     {
       mode: 'subscription',
@@ -21,11 +25,14 @@ router.post('/session', checkAuth, async (req, res) => {
       line_items: [{ price: req.body.priceId, quantity: 1 }],
       success_url: 'http://localhost:3000/articles',
       cancel_url: 'http://localhost:3000/articles-plans',
+      customer: user.stripeCustomerId,
     },
     {
       apiKey: process.env.STRIPE_SECRET_KEY,
     }
   );
+
+  return res.json(session);
 });
 
 export default router;

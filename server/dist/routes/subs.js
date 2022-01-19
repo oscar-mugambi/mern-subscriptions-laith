@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const checkAuth_1 = require("../middleware/checkAuth");
 const stripe_1 = require("../utils/stripe");
+const { User } = require('../models/User');
 const router = express_1.default.Router();
 router.get('/prices', checkAuth_1.checkAuth, async (_req, res) => {
     const prices = await stripe_1.stripe.prices.list({

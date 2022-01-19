@@ -5,7 +5,7 @@ interface User {
   data: {
     id: string;
     email: string;
-    stripeCustomerId: string;
+    customerStripeId: string;
   } | null;
 
   error: string | null;
@@ -38,7 +38,7 @@ const UserProvider = ({ children }: any) => {
         data: {
           id: response.data.user.id,
           email: response.data.user.email,
-          stripeCustomerId: response.data.user.stripeCustomerId,
+          customerStripeId: response.data.user.customerStripeId,
         },
         loading: false,
         error: null,

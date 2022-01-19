@@ -53,7 +53,7 @@ export default function ModalComponent({ text, variant, isSignUpFLow }: ModalPro
       data: {
         id: data.data.user.id,
         email: data.data.user.email,
-        stripeCustomerId: data.data.user.stripeCustomerId,
+        customerStripeId: data.data.user.customerStripeId,
       },
       error: null,
       loading: false,
