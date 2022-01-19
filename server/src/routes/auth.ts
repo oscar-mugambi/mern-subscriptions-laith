@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { checkAuth } from '../middleware/checkAuth';
+import { stripe } from '../utils/stripe';
 
 const User = require('../models/User');
 
@@ -45,6 +46,15 @@ router.post(
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const customer = await stripe.customers.create(
+      {
+        email,
+      },
+      {
+        apiKey: process.env.STRIPE_SECRET_KEY,
+      }
+    );
+
     const newUser = await User.create({
       email,
       password: hashedPassword,
@@ -67,6 +77,7 @@ router.post(
         user: {
           id: newUser._id,
           email: newUser.email,
+          stripeCustomerId: customer.id,
         },
       },
     });

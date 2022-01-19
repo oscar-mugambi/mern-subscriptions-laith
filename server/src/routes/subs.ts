@@ -13,4 +13,19 @@ router.get('/prices', checkAuth, async (_req, res) => {
   return res.send(prices);
 });
 
+router.post('/session', checkAuth, async (req, res) => {
+  const session = await stripe.checkout.sessions.create(
+    {
+      mode: 'subscription',
+      payment_method_types: ['card'],
+      line_items: [{ price: req.body.priceId, quantity: 1 }],
+      success_url: 'http://localhost:3000/articles',
+      cancel_url: 'http://localhost:3000/articles-plans',
+    },
+    {
+      apiKey: process.env.STRIPE_SECRET_KEY,
+    }
+  );
+});
+
 export default router;

@@ -9,6 +9,7 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const checkAuth_1 = require("../middleware/checkAuth");
+const stripe_1 = require("../utils/stripe");
 const User = require('../models/User');
 dotenv_1.default.config();
 const router = express_1.default.Router();
@@ -36,6 +37,11 @@ router.post('/signup', (0, express_validator_1.body)('email').isEmail().withMess
         });
     }
     const hashedPassword = await bcryptjs_1.default.hash(password, 10);
+    const customer = await stripe_1.stripe.customers.create({
+        email,
+    }, {
+        apiKey: process.env.STRIPE_SECRET_KEY,
+    });
     const newUser = await User.create({
         email,
         password: hashedPassword,
@@ -52,6 +58,7 @@ router.post('/signup', (0, express_validator_1.body)('email').isEmail().withMess
             user: {
                 id: newUser._id,
                 email: newUser.email,
+                stripeCustomerId: customer.id,
             },
         },
     });
