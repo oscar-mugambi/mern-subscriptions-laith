@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const auth_1 = __importDefault(require("./routes/auth"));
+const subs_1 = __importDefault(require("./routes/subs"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
@@ -20,6 +21,7 @@ mongoose_1.default
     app.use((0, cors_1.default)());
     console.log('im hit');
     app.use('/auth', auth_1.default);
+    app.use('/subs', subs_1.default);
     app.get('/', (_req, res) => {
         res.send('hello world');
     });

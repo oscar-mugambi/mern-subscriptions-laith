@@ -1,5 +1,6 @@
 import express from 'express';
 import authRoutes from './routes/auth';
+import subRoutes from './routes/subs';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -17,6 +18,7 @@ mongoose
     app.use(cors());
     console.log('im hit');
     app.use('/auth', authRoutes);
+    app.use('/subs', subRoutes);
     app.get('/', (_req, res) => {
       res.send('hello world');
     });

@@ -22,7 +22,7 @@ export default function ModalComponent({ text, variant, isSignUpFLow }: ModalPro
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
-  const [state, setState] = useContext(UserContext);
+  const [_state, setState] = useContext(UserContext);
   const handleModal = () => {
     setShowModal(!showModal);
   };
