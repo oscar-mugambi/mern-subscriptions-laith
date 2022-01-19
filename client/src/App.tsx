@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Nav from './component/Nav/Nav';
 import Articles from './page/Articles';
 import LandingPage from './page/LandingPage';
+import { ProtectedRoutes } from './routes/ProtextedRoutes';
 
 function App() {
   return (
@@ -9,7 +10,9 @@ function App() {
       <Nav />
       <Routes>
         <Route path='/' element={<LandingPage />} />
-        <Route path='/articles' element={<Articles />} />
+        <Route path='/articles' element={<ProtectedRoutes />}>
+          <Route path='/articles' element={<Articles />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
