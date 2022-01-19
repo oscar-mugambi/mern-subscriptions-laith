@@ -6,7 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const checkAuth_1 = require("../middleware/checkAuth");
 const stripe_1 = require("../utils/stripe");
-const { User } = require('../models/User');
+const User = require('../models/User');
+const Articles = require('../models/Articles');
 const router = express_1.default.Router();
 router.get('/prices', checkAuth_1.checkAuth, async (_req, res) => {
     const prices = await stripe_1.stripe.prices.list({
@@ -15,8 +16,7 @@ router.get('/prices', checkAuth_1.checkAuth, async (_req, res) => {
     return res.send(prices);
 });
 router.post('/session', checkAuth_1.checkAuth, async (req, res) => {
-    console.log('got here');
-    const user = await User.findOne({ email: req.user });
+    const user = await User.find({ email: req.user });
     const session = await stripe_1.stripe.checkout.sessions.create({
         mode: 'subscription',
         payment_method_types: ['card'],

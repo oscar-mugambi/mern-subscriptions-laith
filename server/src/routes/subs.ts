@@ -1,9 +1,8 @@
 import express from 'express';
 import { checkAuth } from '../middleware/checkAuth';
 import { stripe } from '../utils/stripe';
-// import User from '../models/User';
-
-const { User } = require('../models/User');
+const User = require('../models/User');
+const Articles = require('../models/Articles');
 
 const router = express.Router();
 
@@ -16,8 +15,8 @@ router.get('/prices', checkAuth, async (_req, res) => {
 });
 
 router.post('/session', checkAuth, async (req, res) => {
-  console.log('got here');
-  const user = await User.findOne({ email: req.user });
+  // console.log('got here');
+  const user = await User.find({ email: req.user });
   const session = await stripe.checkout.sessions.create(
     {
       mode: 'subscription',
