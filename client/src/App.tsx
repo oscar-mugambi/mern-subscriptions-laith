@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Nav from './component/Nav/Nav';
 import Articles from './page/Articles';
 import LandingPage from './page/LandingPage';
-import { ProtectedRoutes } from './routes/ProtextedRoutes';
+import { ProtectedRoutes } from './routes/ProtectedRoutes';
 
 function App() {
   return (
